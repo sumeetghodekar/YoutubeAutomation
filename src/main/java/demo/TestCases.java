@@ -1,7 +1,14 @@
 package demo;
 
-import org.openqa.selenium.chrome.ChromeDriver;
+import java.util.logging.Level;
 
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+
+import dev.failsafe.internal.util.Assert;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 
@@ -10,9 +17,24 @@ public class TestCases {
     public TestCases()
     {
         System.out.println("Constructor: TestCases");
-        WebDriverManager.chromedriver().timeout(30).setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
+
+        WebDriverManager.chromedriver().browserVersion("125.0.6422.61").setup();
+        ChromeOptions options = new ChromeOptions();
+        LoggingPreferences logs = new LoggingPreferences();
+
+      
+        logs.enable(LogType.BROWSER, Level.ALL);
+        logs.enable(LogType.DRIVER, Level.ALL);
+        options.setCapability("goog:loggingPrefs", logs);
+        options.addArguments("start-maximized");
+        options.addArguments("--disable-blink-features=AutomationControlled");
+
+      
+        System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "chromedriver.log");
+
+        driver = new ChromeDriver(options);
+        
+
     }
 
     public void endTest()
@@ -21,13 +43,6 @@ public class TestCases {
         driver.close();
         driver.quit();
 
-    }
-
-    
-    public  void testCase01(){
-        System.out.println("Start Test case: testCase01");
-        driver.get("https://www.google.com");
-        System.out.println("end Test case: testCase02");
     }
 
 
